@@ -1,8 +1,8 @@
 import csv
 import sys
 
-INSULT_CORPUS_FILENAME = 'corpora/insult_corpus_train.txt'
-CLEAN_CORPUS_FILENAME = 'corpora/clean_corpus_train.txt'
+INSULT_CORPUS_FILENAME = 'corpora/insult_corpus_test.txt'
+CLEAN_CORPUS_FILENAME = 'corpora/clean_corpus_test.txt'
 
 def main(filename):
 	insult_file = open(INSULT_CORPUS_FILENAME, 'w+')
