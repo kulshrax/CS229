@@ -6,14 +6,14 @@
    are suprisingly common, so this resulted in the model always getting 
    -infinity for both probabilities, in which case it defaulted to insult.
 
-   Default to true on tie:
+   Default to clean on tie:
 	~~~~~~~ Results ~~~~~~~
 	Precision: 0.798
 	Recall: 0.935
 	F1 Score: 0.861
 	tp: 3592, tn: 262, fp: 909, fn: 251
  
- 	Default to false on tie: ( LET'S USE THIS ONE SINCE IT'S WORSE :P )
+ 	Default to insult on tie: ( LET'S USE THIS ONE SINCE IT'S WORSE :P )
  	~~~~~~~ Results ~~~~~~~
 	Precision: 0.829
 	Recall: 0.280
