@@ -1,0 +1,122 @@
+
+1. BASELINE Scores:
+   
+   Naive Bayes without laplace smoothing, meaning when a word that's never seen 
+   before is encountered is seen, the log prob for it is -infinity. New words
+   are suprisingly common, so this resulted in the model always getting 
+   -infinity for both probabilities, in which case it defaulted to insult.
+
+   Default to true on tie:
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.798
+	Recall: 0.935
+	F1 Score: 0.861
+	tp: 3592, tn: 262, fp: 909, fn: 251
+ 
+ 	Default to false on tie: ( LET'S USE THIS ONE SINCE IT'S WORSE :P )
+ 	~~~~~~~ Results ~~~~~~~
+	Precision: 0.829
+	Recall: 0.280
+	F1 Score: 0.419
+	tp: 1077, tn: 949, fp: 222, fn: 2766
+
+2. Trial One: Ignore words not in one or the other training set.
+	Use trainImproved1() instead of train().
+
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.898
+	Recall: 0.693
+	F1 Score: 0.782
+	tp: 2663, tn: 869, fp: 302, fn: 1180
+
+
+3. Improvement Two: Combine vocabularies
+	Take all words in cleanLM but not in insultLM and puts them in cleanLM with
+	probability 1/10. Effectively Laplace Smoothing with value a = 1/10. Does
+	the same in the opposite direction (adds words to insultLM).
+	Set LAPLACE_SMOOTHING = True and use train(), testImproved1()
+
+	LAPLACE_SMOOTHER = 0.001, Default to clean
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.802
+	Recall: 0.929
+	F1 Score: 0.861
+	tp: 3571, tn: 288, fp: 883, fn: 272
+
+	LAPLACE_SMOOTHER = 0.001, Default to insult
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.855
+	Recall: 0.855
+	F1 Score: 0.855
+	tp: 3284, tn: 613, fp: 558, fn: 559
+
+	LAPLACE_SMOOTHER = 0.01, Default to clean
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.804
+	Recall: 0.925
+	F1 Score: 0.860
+	tp: 3555, tn: 302, fp: 869, fn: 288
+
+	LAPLACE_SMOOTHER = 0.01, Default to insult
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.865
+	Recall: 0.844
+	F1 Score: 0.854
+	tp: 3242, tn: 667, fp: 504, fn: 601
+
+	LAPLACE_SMOOTHER = 0.1,  Default to clean
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.809
+	Recall: 0.913
+	F1 Score: 0.858
+	tp: 3508, tn: 343, fp: 828, fn: 335
+
+	LAPLACE_SMOOTHER = 0.1,  Default to insult
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.885
+	Recall: 0.800
+	F1 Score: 0.840
+	tp: 3074, tn: 771, fp: 400, fn: 769
+
+	LAPLACE_SMOOTHER = 1.0
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.812
+	Recall: 0.845
+	F1 Score: 0.828
+	tp: 3247, tn: 418, fp: 753, fn: 596
+
+
+	==> Seems to do better for really small values of the smoother if default to 
+		clean; if default to insult, 0.1 is best.
+
+4. Eliminate stop words
+
+	Run with LAPLACE_SMOOTHER = 0.001, train()
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.773
+	Recall: 0.992
+	F1 Score: 0.869
+	tp: 3811, tn: 50, fp: 1121, fn: 32
+
+	==> Note that this more aggressively targets mean posts and removes them 
+	(this gets ~300 more insults than the baseline) but at a serious tradeoff
+	for censoring people too harshely (gets ~200 more false positives, censoring
+	okay comments).
+
+	Run with LAPLACE_SMOOTHER = 0.001, trainImproved1() (e.g., it doesn't default
+	to -inf when it encounters an unknown word)
+
+	Default to clean
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.849
+	Recall: 0.864
+	F1 Score: 0.856
+	tp: 3321, tn: 580, fp: 591, fn: 522
+
+
+	Default to insult, SMOOTHER = 0.1
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.875
+	Recall: 0.815
+	F1 Score: 0.844
+	tp: 3132, tn: 724, fp: 447, fn: 711

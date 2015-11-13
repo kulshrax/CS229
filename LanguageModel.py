@@ -18,6 +18,9 @@ class LanguageModel:
 	def getDocCount(self):
 		return self.docCount
 
+	def getTotalWordCount(self):
+		return sum([self.wordFreqs[a] for a in self.wordFreqs])
+
 	def getWordFreqs(self):
 		return self.wordFreqs
 
