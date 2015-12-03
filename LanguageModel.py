@@ -1,6 +1,7 @@
 import os
 from collections import Counter
 from nltk.corpus.reader.plaintext import PlaintextCorpusReader
+from nltk.util import ngrams
 
 corpusdir = 'corpora/' # Directory of corpus.
 
@@ -14,6 +15,8 @@ class LanguageModel:
 		self.corpus = PlaintextCorpusReader(corpusdir, filename)
 		self.docCount = len(self.corpus.sents())
 		self.wordFreqs = Counter(self.corpus.words())
+		self.bigramFreqs = Counter(ngrams(self.corpus.words(), 2))
+		self.trigramFreqs = Counter(ngrams(self.corpus.words(), 3))
 		
 	def getDocCount(self):
 		return self.docCount
@@ -29,3 +32,15 @@ class LanguageModel:
 
 	def getRawDump(self):
 		return self.corpus.raw().strip()
+
+	def getBigramFreqs(self):
+		return self.bigramFreqs
+
+	def getTotalBigramCount(self):
+		return sum([self.bigramFreqs[a] for a in self.bigramFreqs])
+
+	def getTrigramFreqs(self):
+		return self.trigramFreqs
+
+	def getTotalTrigramCount(self):
+		return sum([self.trigramFreqs[a] for a in self.trigramFreqs])

@@ -1,6 +1,7 @@
 from LanguageModel import LanguageModel
 from math import log
 from nltk.corpus import stopwords
+from collections import Counter
 
 INSULT_TRAIN_FILE = 'insult_corpus_train.txt'
 CLEAN_TRAIN_FILE = 'clean_corpus_train.txt'
@@ -11,7 +12,9 @@ CLEAN_TEST_FILE = 'clean_corpus_test.txt'
 LAPLACE_SMOOTHING = True
 LAPLACE_SMOOTHER = 0.1
 
-REMOVE_STOPWORDS = True
+REMOVE_STOPWORDS = False
+STUPID_BACKOFF = True
+SB_ALPHA = 0.1 #discount factor for stupid backoff
 
 def main():
 	cleanLM = LanguageModel(CLEAN_TRAIN_FILE)
@@ -22,7 +25,8 @@ def main():
 
 	NB = baselineNaiveBayes(cleanLM, insultLM)
 	NB.train()
-	tp, tn, fp, fn = NB.testImproved1(cleanTestSents, insultTestSents)
+	#tp, tn, fp, fn = NB.testImproved1(cleanTestSents, insultTestSents)
+	tp, tn, fp, fn = NB.testStupidBackoff(cleanTestSents, insultTestSents)
 
 	interpretResults(tp, tn, fp, fn)
 
@@ -57,6 +61,12 @@ class baselineNaiveBayes:
 		self.cleanPrior = None
 		self.insultPrior = None
 
+		# set by train() for stupid backoff
+		self.cleanBigramProbs = Counter()
+		self.insultBigramProbs = Counter()
+		self.cleanTrigramProbs = Counter()
+		self.insultTrigramProbs = Counter()
+
 	def train(self):
 		# Calculate word probabilities
 
@@ -79,6 +89,28 @@ class baselineNaiveBayes:
 			for word in self.insultWordProbs:
 				self.insultWordProbs[word] = (self.insultWordProbs[word] + 0.0) / self.insultTotalWords
 
+		if (STUPID_BACKOFF):
+			cleanBigramFreqs = self.cleanLM.getBigramFreqs()
+			insultBigramFreqs = self.insultLM.getBigramFreqs()
+			cleanBigramTotal = self.cleanLM.getTotalBigramCount()
+			insultBigramTotal = self.insultLM.getTotalBigramCount()
+
+			cleanTrigramFreqs = self.cleanLM.getTrigramFreqs()
+			insultTrigramFreqs = self.insultLM.getTrigramFreqs()
+			cleanTrigramTotal = self.cleanLM.getTotalTrigramCount()
+			insultTrigramTotal = self.insultLM.getTotalTrigramCount()
+
+			for word in cleanBigramFreqs:
+				self.cleanBigramProbs[word] = (cleanBigramFreqs[word] + 0.0) / cleanBigramTotal
+			for word in insultBigramFreqs:
+				self.insultBigramProbs[word] = (insultBigramFreqs[word] + 0.0) / insultBigramTotal
+
+			for word in cleanTrigramFreqs:
+				self.cleanTrigramProbs[word] = (cleanTrigramFreqs[word] + 0.0) / cleanTrigramTotal
+			for word in insultBigramFreqs:
+				self.insultTrigramProbs[word] = (insultTrigramFreqs[word] + 0.0) / insultTrigramTotal
+
+
 		# Calculate class priors
 		self.cleanPrior = (self.numCleanSentences + 0.0) / (self.numCleanSentences + self.numInsultSentences)
 		self.insultPrior = (self.numInsultSentences + 0.0) / (self.numCleanSentences + self.numInsultSentences)
@@ -90,8 +122,8 @@ class baselineNaiveBayes:
 		falsePos = 0 # Clean mislabeled as insult
 		falseNeg = 0 # Insult mislabeled as clean
 		
-		print self.cleanWordProbs
-		print self.insultWordProbs
+		#print self.cleanWordProbs
+		#print self.insultWordProbs
 				
 		for sentence in cleanSents:
 			cleanProb = log(self.cleanPrior)
@@ -106,7 +138,7 @@ class baselineNaiveBayes:
 					insultProb += log(self.insultWordProbs[word])
 				else:
 					insultProb = float("-inf")
-			print "CleanProb {}, InsultProb {}".format(cleanProb, insultProb)
+			#print "CleanProb {}, InsultProb {}".format(cleanProb, insultProb)
 			if (cleanProb > insultProb):
 				truePos += 1
 			else:
@@ -139,8 +171,8 @@ class baselineNaiveBayes:
 		falsePos = 0 # Clean mislabeled as insult
 		falseNeg = 0 # Insult mislabeled as clean
 		
-		print self.cleanWordProbs
-		print self.insultWordProbs
+		#print self.cleanWordProbs
+		#print self.insultWordProbs
 		
 		
 		
@@ -148,12 +180,12 @@ class baselineNaiveBayes:
 			cleanProb = log(self.cleanPrior)
 			insultProb = log(self.insultPrior)
 			for word in sentence:
-				print "cleanProb: {}, insultProb: {}".format(self.cleanWordProbs[word], self.insultWordProbs[word])
+				#print "cleanProb: {}, insultProb: {}".format(self.cleanWordProbs[word], self.insultWordProbs[word])
 				if (self.cleanWordProbs[word] > 0 and self.insultWordProbs[word] > 0):
 					cleanProb += log(self.cleanWordProbs[word])
 					insultProb += log(self.insultWordProbs[word])
-			print "cleanProb {}, insultProb {}".format(cleanProb, insultProb)
-			if (cleanProb > insultProb):
+			#print "cleanProb {}, insultProb {}".format(cleanProb, insultProb)
+			if (cleanProb >= insultProb):
 				truePos += 1
 			else:
 				falseNeg += 1
@@ -167,10 +199,83 @@ class baselineNaiveBayes:
 					cleanProb += log(self.cleanWordProbs[word])
 					insultProb += log(self.insultWordProbs[word])
 
-			if (cleanProb > insultProb):
+			if (cleanProb >= insultProb):
 				falsePos += 1
 			else:
 				trueNeg += 1
+
+		return truePos, trueNeg, falsePos, falseNeg
+
+	def testStupidBackoff(self, cleanSents, insultSents):
+		truePos = 0 # Correctly-labeled insults
+		trueNeg = 0 # Correctly-labeled clean
+		falsePos = 0 # Clean mislabeled as insult
+		falseNeg = 0 # Insult mislabeled as clean
+		
+		# Based off code I wrote for a CS124 assignment 
+
+		for sentence in cleanSents:
+			cleanProb = log(self.cleanPrior)
+			insultProb = log(self.insultPrior)
+			for i in xrange(len(sentence)-1):
+				bigram = (sentence[i], sentence[i+1]) 
+				bigramCleanProb = self.cleanBigramProbs[bigram]
+				bigramInsultProb = self.insultBigramProbs[bigram]
+
+				# Use clean bigram else unigram
+				if bigramCleanProb > 0.0:
+					print("1USING BIGRAM! {}".format(bigram))
+					cleanProb += log(bigramCleanProb)
+				elif (self.cleanWordProbs[bigram[0]] > 0 and self.insultWordProbs[bigram[0]] > 0):
+					cleanProb += log(self.cleanWordProbs[bigram[0]])
+				else:
+					print("Skipping clean word")
+
+				# Use insult bigram else unigram
+				if bigramInsultProb > 0.0:
+					print("2USING BIGRAM! {}".format(bigram))
+					insultProb += log(bigramInsultProb)
+				elif (self.cleanWordProbs[bigram[0]] > 0 and self.insultWordProbs[bigram[0]] > 0):
+					insultProb += log(SB_ALPHA * self.insultWordProbs[bigram[0]])
+				else:
+					print("Skipping insult word")
+				
+			if (cleanProb >= insultProb):
+				truePos += 1
+			else:
+				falseNeg += 1
+			print ("Should be clean. cleanProb: {}, insultProb: {}".format(cleanProb, insultProb))
+
+		for sentence in insultSents:
+			cleanProb = log(self.cleanPrior)
+			insultProb = log(self.insultPrior)
+			for i in xrange(len(sentence)-1):
+				bigram = (sentence[i], sentence[i+1]) 
+				bigramCleanProb = self.cleanBigramProbs[bigram]
+				bigramInsultProb = self.insultBigramProbs[bigram]
+
+				# Use clean bigram else unigram
+				if bigramCleanProb > 0.0:
+					print("3USING BIGRAM! {}".format(bigram))
+					cleanProb += log(bigramCleanProb)
+				elif (self.cleanWordProbs[bigram[0]] > 0 and self.insultWordProbs[bigram[0]] > 0):
+					cleanProb += log(SB_ALPHA * self.cleanWordProbs[bigram[0]])
+
+				# Use insult bigram else unigram
+				if bigramInsultProb > 0.0:
+					print("4USING BIGRAM! {}".format(bigram))
+					insultProb += log(bigramInsultProb)
+				elif (self.cleanWordProbs[bigram[0]] > 0 and self.insultWordProbs[bigram[0]] > 0):
+					insultProb += log(SB_ALPHA * self.insultWordProbs[bigram[0]])
+
+
+			if (cleanProb >= insultProb):
+				falsePos += 1
+			else:
+				trueNeg += 1
+
+			print ("Should be insult. cleanProb: {}, insultProb: {}".format(cleanProb, insultProb))
+
 
 		return truePos, trueNeg, falsePos, falseNeg
 
