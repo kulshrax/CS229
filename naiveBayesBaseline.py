@@ -10,10 +10,11 @@ INSULT_TEST_FILE = 'insult_corpus_test.txt'
 CLEAN_TEST_FILE = 'clean_corpus_test.txt'
 
 LAPLACE_SMOOTHING = True
-LAPLACE_SMOOTHER = 0.1
+LAPLACE_SMOOTHER = 0.01
 
 REMOVE_STOPWORDS = False
 STUPID_BACKOFF = True
+USING_TRIGRAM = True
 SB_ALPHA = 0.1 #discount factor for stupid backoff
 
 def main():
@@ -25,8 +26,10 @@ def main():
 
 	NB = baselineNaiveBayes(cleanLM, insultLM)
 	NB.train()
-	#tp, tn, fp, fn = NB.testImproved1(cleanTestSents, insultTestSents)
-	tp, tn, fp, fn = NB.testStupidBackoff(cleanTestSents, insultTestSents)
+	if (STUPID_BACKOFF):
+		tp, tn, fp, fn = NB.testStupidBackoff(cleanTestSents, insultTestSents)
+	else:
+		tp, tn, fp, fn = NB.testImproved1(cleanTestSents, insultTestSents)
 
 	interpretResults(tp, tn, fp, fn)
 
@@ -217,26 +220,42 @@ class baselineNaiveBayes:
 		for sentence in cleanSents:
 			cleanProb = log(self.cleanPrior)
 			insultProb = log(self.insultPrior)
-			for i in xrange(len(sentence)-1):
-				bigram = (sentence[i], sentence[i+1]) 
+			for i in xrange(len(sentence)):
+				if (i < len(sentence) - 2):
+					trigram = (sentence[i], sentence[i+1], sentence[i+2])
+				else:
+					trigram = None
+				if (i < len(sentence) - 1):
+					bigram = (sentence[i], sentence[i+1]) 
+				else:
+					bigram = None
+				unigram = sentence[i]
 				bigramCleanProb = self.cleanBigramProbs[bigram]
 				bigramInsultProb = self.insultBigramProbs[bigram]
+				trigramCleanProb = self.cleanTrigramProbs[trigram]
+				trigramInsultProb = self.insultTrigramProbs[trigram]
 
 				# Use clean bigram else unigram
-				if bigramCleanProb > 0.0:
+				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
+					print("1USING TRIGRAM! {}".format(trigram))
+					cleanProb += log(trigramCleanProb)
+				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					print("1USING BIGRAM! {}".format(bigram))
-					cleanProb += log(bigramCleanProb)
-				elif (self.cleanWordProbs[bigram[0]] > 0 and self.insultWordProbs[bigram[0]] > 0):
-					cleanProb += log(self.cleanWordProbs[bigram[0]])
+					cleanProb += log(SB_ALPHA * bigramCleanProb)
+				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
+					cleanProb += log(SB_ALPHA * SB_ALPHA * self.cleanWordProbs[unigram])
 				else:
 					print("Skipping clean word")
 
 				# Use insult bigram else unigram
-				if bigramInsultProb > 0.0:
+				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
+					print("2USING TRIGRAM! {}".format(trigram))
+					insultProb += log(trigramInsultProb)
+				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					print("2USING BIGRAM! {}".format(bigram))
-					insultProb += log(bigramInsultProb)
-				elif (self.cleanWordProbs[bigram[0]] > 0 and self.insultWordProbs[bigram[0]] > 0):
-					insultProb += log(SB_ALPHA * self.insultWordProbs[bigram[0]])
+					insultProb += log(SB_ALPHA * bigramInsultProb)
+				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
+					insultProb += log(SB_ALPHA * SB_ALPHA * self.insultWordProbs[unigram])
 				else:
 					print("Skipping insult word")
 				
@@ -249,24 +268,39 @@ class baselineNaiveBayes:
 		for sentence in insultSents:
 			cleanProb = log(self.cleanPrior)
 			insultProb = log(self.insultPrior)
-			for i in xrange(len(sentence)-1):
-				bigram = (sentence[i], sentence[i+1]) 
+			for i in xrange(len(sentence)-2):
+				if (i < len(sentence) - 2):
+					trigram = (sentence[i], sentence[i+1], sentence[i+2])
+				else:
+					trigram = None
+				if (i < len(sentence) - 1):
+					bigram = (sentence[i], sentence[i+1]) 
+				else:
+					bigram = None 
 				bigramCleanProb = self.cleanBigramProbs[bigram]
 				bigramInsultProb = self.insultBigramProbs[bigram]
+				trigramCleanProb = self.cleanTrigramProbs[trigram]
+				trigramInsultProb = self.insultTrigramProbs[trigram]
 
 				# Use clean bigram else unigram
-				if bigramCleanProb > 0.0:
+				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
+					print("1USING TRIGRAM! {}".format(trigram))
+					cleanProb += log(trigramCleanProb)
+				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					print("3USING BIGRAM! {}".format(bigram))
-					cleanProb += log(bigramCleanProb)
-				elif (self.cleanWordProbs[bigram[0]] > 0 and self.insultWordProbs[bigram[0]] > 0):
-					cleanProb += log(SB_ALPHA * self.cleanWordProbs[bigram[0]])
+					cleanProb += log(SB_ALPHA * bigramCleanProb)
+				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
+					cleanProb += log(SB_ALPHA * SB_ALPHA * self.cleanWordProbs[unigram])
 
 				# Use insult bigram else unigram
-				if bigramInsultProb > 0.0:
+				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
+					print("1USING TRIGRAM! {}".format(trigram))
+					insultProb += log(trigramInsultProb)
+				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					print("4USING BIGRAM! {}".format(bigram))
-					insultProb += log(bigramInsultProb)
-				elif (self.cleanWordProbs[bigram[0]] > 0 and self.insultWordProbs[bigram[0]] > 0):
-					insultProb += log(SB_ALPHA * self.insultWordProbs[bigram[0]])
+					insultProb += log(SB_ALPHA * bigramInsultProb)
+				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
+					insultProb += log(SB_ALPHA * SB_ALPHA * self.insultWordProbs[unigram])
 
 
 			if (cleanProb >= insultProb):
