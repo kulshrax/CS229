@@ -12,6 +12,7 @@ corpusdir = 'corpora/' # Directory of corpus.
 
 class LanguageModel:
 	def __init__(self, filename):
+		self.filename = filename
 		self.corpus = PlaintextCorpusReader(corpusdir, filename)
 		self.docCount = len(self.corpus.sents())
 		self.wordFreqs = Counter(self.corpus.words())
@@ -44,3 +45,13 @@ class LanguageModel:
 
 	def getTotalTrigramCount(self):
 		return sum([self.trigramFreqs[a] for a in self.trigramFreqs])
+
+	def splitBySpaces(self):
+		open_file = open(corpusdir+self.filename)
+		to_return = []
+		for line in open_file:
+			tokens = line.split(' ')
+			to_return.append(tokens)
+		open_file.close()
+		return to_return
+
