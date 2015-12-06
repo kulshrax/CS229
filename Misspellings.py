@@ -26,9 +26,16 @@ class Misspellings(object):
     self.cleanSplitSpaces = LanguageModel(CLEAN_TRAIN_FILE).splitBySpaces()
     self.insultSplitSpaces = LanguageModel(INSULT_TRAIN_FILE).splitBySpaces()
 
-  def get_clean_misspellings(self):
+    self.cleanTestSplitSpaces = LanguageModel(CLEAN_TEST_FILE).splitBySpaces()
+    self.insultTestSplitSpaces = LanguageModel(INSULT_TEST_FILE).splitBySpaces()
+
+  def get_clean_misspellings(self, isTest=True):
+    if isTest:
+      fileName = self.cleanTestSplitSpaces
+    else:
+      fileName = self.cleanSplitSpaces
     vector = []
-    for sent in self.cleanSplitSpaces:
+    for sent in fileName:
       misspelled_words = 0
       total_words = 0
       for word in sent:
@@ -46,9 +53,13 @@ class Misspellings(object):
       vector.append(misspelled_words/float(total_words))
     return vector
 
-  def get_insult_misspellings(self):
+  def get_insult_misspellings(self, isTest=True):
+    if isTest:
+      fileName = self.cleanTestSplitSpaces
+    else:
+      fileName = self.cleanSplitSpaces
     vector = []
-    for sent in self.insultSplitSpaces:
+    for sent in fileName:
       misspelled_words = 0
       total_words = 0
       for word in sent:
