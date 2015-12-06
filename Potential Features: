@@ -5,6 +5,8 @@ Potential New Features:
 
  - Fraction of nouns / verbs / adjectives, etc.
  	- NLTK PoS Tagging Module
+
+
  - Fraction of misspelled things => falls out of bag of words
   	- NLTK SpellCheck Module
   	- Idea behind this is that misspelled words (use of internet slang like "u" instead of "you") correlate with insults
@@ -13,6 +15,8 @@ Potential New Features:
  	- OR should we use a pre-existing NLTK implementation's sentiment weights?
  - Number of most positive / most negative words in this sample
  	- Based on above
+
+ 	
  - Use the score generated from Naive Bayes (weigh this heavily)
  	- DONE (from previous work)
 
