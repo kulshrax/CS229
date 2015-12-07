@@ -6,7 +6,7 @@ the fraction of nouns, verbs, and adjectives in a given corpus.
 """
 
 from __future__ import division
-from collections import Counter
+from collections import Counter, defaultdict
 import nltk
 
 TAG_CLASSES = {
@@ -38,4 +38,4 @@ def pos_fractions(tokens):
     """Return the fraction of nouns, verbs, and adjectives in the token list."""
     counts = pos_counts(tokens)
     total = len(tokens)
-    return dict((tag, count/total) for tag, count in counts.iteritems())
+    return defaultdict(int, ((tag, count/total) for (tag, count) in counts.iteritems()))
