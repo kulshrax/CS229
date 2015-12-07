@@ -112,6 +112,7 @@ def main():
     output3 = clf.predict(testMatrix).tolist()  
 
     ### SENTIMENT ###
+    print("Running baseline + PoS Features + Sentiment Features")
     s = Sentiment()
     clean_train = np.array(s.get_clean_train_vector())
     insult_train = np.array(s.get_insult_train_vector())
@@ -131,6 +132,7 @@ def main():
     output4 = clf.predict(testMatrix).tolist()  
 
     ### MISSPELLINGS ###
+    print("Running baseline + PoS Features + Sentiment Features + Misspellings features")
     m = Missepllings()
     clean_train = np.array(m.get_clean_misspellings(False))
     insult_train = np.array(s.get_insult_misspellings(False))
