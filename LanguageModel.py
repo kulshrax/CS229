@@ -18,6 +18,7 @@ class LanguageModel:
 		self.wordFreqs = Counter(self.corpus.words())
 		self.bigramFreqs = Counter(ngrams(self.corpus.words(), 2))
 		self.trigramFreqs = Counter(ngrams(self.corpus.words(), 3))
+		self.punctuation = set([',', ';', '\'', '"', '.', '!', '?'])
 		
 	def getDocCount(self):
 		return self.docCount
@@ -50,7 +51,9 @@ class LanguageModel:
 		open_file = open(corpusdir+self.filename)
 		to_return = []
 		for line in open_file:
-			tokens = line.split(' ')
+			for char in self.punctuation:
+				line = line.replace(char, '')
+			tokens = line.split()
 			to_return.append(tokens)
 		open_file.close()
 		return to_return
