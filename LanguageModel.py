@@ -13,12 +13,16 @@ corpusdir = 'corpora/' # Directory of corpus.
 
 class LanguageModel:
 	def __init__(self, filename):
+		self.filename = filename
 		self.corpus = PlaintextCorpusReader(corpusdir, filename)
-		self.docCount = len(self.corpus.sents())
-		self.wordFreqs = Counter(self.corpus.words())
-		self.bigramFreqs = Counter(ngrams(self.corpus.words(), 2))
-		self.trigramFreqs = Counter(ngrams(self.corpus.words(), 3))
-		self.posFracs = pos.pos_fractions(self.corpus.words())
+		# Vector of vectors -> each sub-vector is a document 
+		self.punctuation = set([',', ';', '\'', '"', '.', '!', '?'])
+		self.allComments = self.splitBySpaces()
+		self.words = [word for comment in self.allComments for word in comment]
+		self.docCount = len(self.allComments)
+		self.wordFreqs = Counter(self.words)
+		self.bigramFreqs = Counter(ngrams(self.words, 2))
+		self.trigramFreqs = Counter(ngrams(self.words, 3))
 		
 	def getDocCount(self):
 		return self.docCount
@@ -32,9 +36,6 @@ class LanguageModel:
 	def getSents(self):
 		return self.corpus.sents()
 
-	def getRawDump(self):
-		return self.corpus.raw().strip()
-
 	def getBigramFreqs(self):
 		return self.bigramFreqs
 
@@ -47,11 +48,13 @@ class LanguageModel:
 	def getTotalTrigramCount(self):
 		return sum([self.trigramFreqs[a] for a in self.trigramFreqs])
 
-	def getNounFrac(self):
-		return self.posFracs['N']
-
-	def getVerbFrac(self):
-		return self.posFracs['V']
-
-	def getAdjFrac(self):
-		return self.posFracs['A']
+	def splitBySpaces(self):
+		open_file = open(corpusdir+self.filename)
+		to_return = []
+		for line in open_file:
+			for char in self.punctuation:
+				line = line.replace(char, '')
+			tokens = line.split()
+			to_return.append(tokens)
+		open_file.close()
+		return to_return
