@@ -14,19 +14,26 @@ class Sentiment(object):
     self.cleanSents = LanguageModel(CLEAN_TRAIN_FILE).splitBySpaces()
     self.insultSents = LanguageModel(INSULT_TRAIN_FILE).splitBySpaces()
 
-  def get_train_clean_sentiments(self):
-    for word in self.cleanSents:
-      pos_score, neg_score = senti_classifier.polarity_scores(word)
-      print pos_score
-      print neg_score
+    self.cleanTestSents = LanguageModel(CLEAN_TEST_FILE).splitBySpaces()
+    self.insultTestSents = LanguageModel(INSULT_TEST_FILE).splitBySpaces()
 
-  def get_train_insult_sentiments(self):
-    return senti_classifier.polarity_scores(self.insultSents)
+  def get_sentiments(self, sents):
+    scores = {}
+    num_comment = 0
+    for comment in sents:
+      num_comment += 1
+      full_comment = ' '.join(comment)
+      scores[num_comment] = senti_classifier.polarity_scores([full_comment])
+      print num_comment
+      print scores[num_comment]
+    return scores
 
 if __name__ == '__main__':
   s = Sentiment()
-  print 'Clean:'
-  print s.get_train_clean_sentiments()
-  print 'Insult:'
-  print s.get_train_insult_sentiments()
+  training_clean = s.get_sentiments(s.cleanSents)
+  training_insult = s.get_sentiments(s.insultSents)
+  test_clean = s.get_sentiments(s.cleanTestSents)
+  test_insult = s.get_sentiments(s.insultTestSents)
+
+
 
