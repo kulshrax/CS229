@@ -22,24 +22,29 @@ REMOVE_STOPWORDS = False
 STUPID_BACKOFF = True
 USING_TRIGRAM = True
 SB_ALPHA = 0.1 #discount factor for stupid backoff
+ALPHA = 1.0
 
 def main():
-	cleanLM = LanguageModel(CLEAN_TRAIN_AA_FILE)
-	insultLM = LanguageModel(INSULT_TRAIN_AA_FILE)
-	
-	cleanTestSents = LanguageModel(CLEAN_TRAIN_AB_FILE).getSents()
-	insultTestSents = LanguageModel(INSULT_TRAIN_AB_FILE).getSents()
 
-	NB = baselineNaiveBayes(cleanLM, insultLM)
-	NB.train()
-	#print NB.genProbs(cleanTestSents, insultTestSents)
+	for alpha in [0.3, 0.5, 0.7, 0.9, 0.95, 0.97, 0.99, 1.00, 1.01, 1.03, 1.05, 1.07, 1.1, 1.3, 1.5, 1.7, 2.0, 3.0, 5.0]:
+		ALPHA = alpha
 
-	if (STUPID_BACKOFF):
-		tp, tn, fp, fn = NB.testStupidBackoff(cleanTestSents, insultTestSents)
-	else:
-		tp, tn, fp, fn = NB.testImproved1(cleanTestSents, insultTestSents)
+		cleanLM = LanguageModel(CLEAN_TRAIN_FILE)
+		insultLM = LanguageModel(INSULT_TRAIN_FILE)
+		
+		cleanTestSents = LanguageModel(CLEAN_TEST_FILE).getSents()
+		insultTestSents = LanguageModel(INSULT_TEST_FILE).getSents()
 
-	interpretResults(tp, tn, fp, fn)
+		NB = baselineNaiveBayes(cleanLM, insultLM)
+		NB.train()
+		#print NB.genProbs(cleanTestSents, insultTestSents)
+
+		if (STUPID_BACKOFF):
+			tp, tn, fp, fn = NB.testStupidBackoff(cleanTestSents, insultTestSents)
+		else:
+			tp, tn, fp, fn = NB.testImproved1(cleanTestSents, insultTestSents)
+
+		interpretResults(tp, tn, fp, fn)
 
 def interpretResults(tp, tn, fp, fn):
 	precision = (tp + 0.0) / (tp + fp)
@@ -331,7 +336,7 @@ class baselineNaiveBayes:
 				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
 					insultProb += log(SB_ALPHA * SB_ALPHA * self.insultWordProbs[unigram])
 				
-			if (cleanProb >= insultProb):
+			if ((cleanProb + 0.0) / insultProb <= ALPHA):
 				truePos += 1
 			else:
 				falseNeg += 1
@@ -365,7 +370,7 @@ class baselineNaiveBayes:
 				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					insultProb += log(SB_ALPHA * bigramInsultProb)
 
-			if (cleanProb >= insultProb):
+			if ((cleanProb + 0.0) / insultProb <= ALPHA):
 				falsePos += 1
 			else:
 				trueNeg += 1

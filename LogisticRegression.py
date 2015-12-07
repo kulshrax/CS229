@@ -1,4 +1,4 @@
-from sklearn import svm
+from sklearn.linear_model import LogisticRegression
 from LanguageModel import LanguageModel
 import numpy as np
 from naiveBayesBaseline import baselineNaiveBayes
@@ -52,7 +52,7 @@ def main():
 
     testMatrix = np.array(NB.genProbs(testCleanLM.getSents(), testInsultLM.getSents()))
 
-    clf = svm.SVC()
+    clf = LogisticRegression()
     print ("\tTraining SVM....")    
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....") 
@@ -72,7 +72,7 @@ def main():
     trainMatrix = np.hstack((trainMatrix, posFeatures))
     testMatrix = np.hstack((testMatrix, testPosFeatures))
 
-    clf = svm.SVC()
+    clf = LogisticRegression()
     print ("\tTraining SVM....")    
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....") 
@@ -105,7 +105,7 @@ def main():
     testMatrix = np.hstack((testMatrix, tfidf_test_features))
 
 
-    clf = svm.SVC()
+    clf = LogisticRegression()
     print ("\tTraining SVM....")  
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....")   
@@ -131,7 +131,7 @@ def main():
     trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
     testMatrix = np.hstack((testMatrix, sentiment_test_features))
 
-    clf = svm.SVC()
+    clf = LogisticRegression()
     print ("\tTraining SVM....")  
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....")   
@@ -157,13 +157,13 @@ def main():
     trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
     testMatrix = np.hstack((testMatrix, sentiment_test_features))
 
-    clf = svm.SVC()
+    clf = LogisticRegression()
     print ("\tTraining SVM....")  
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....")   
     output5 = clf.predict(testMatrix).tolist()  
 
-    with open('SVM_output_file.txt', 'w+') as f:
+    with open('LOG_REG_output_file.txt', 'w+') as f:
         f.write("Output 1\n")
         f.write("{}\n".format(output1))
         interpret_results(output1, testLabels, f)
