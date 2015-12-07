@@ -112,15 +112,21 @@ def main():
     output3 = clf.predict(testMatrix).tolist()  
 
     ### SENTIMENT ###
-    print("Running baseline + PoS Features + Sentiment Features")
+    print("Running baseline + PoS Features + TF-IDF Features + Sentiment Features")
     s = Sentiment()
     clean_train = np.array(s.get_clean_train_vector())
     insult_train = np.array(s.get_insult_train_vector())
     sentiment_train_features = np.concatenate((clean_train, insult_train), axis=0)
+    shape = sentiment_train_features.shape
+    sentiment_train_features = sentiment_train_features.reshape((shape[0], 1))
+    print sentiment_train_features.shape
 
     clean_test = np.array(s.get_clean_test_vector())
     insult_test = np.array(s.get_insult_test_vector())
     sentiment_test_features = np.concatenate((clean_test, insult_test), axis=0)
+    shape = sentiment_test_features.shape
+    sentiment_test_features = sentiment_test_features.reshape((shape[0], 1))
+    print sentiment_test_features.shape
 
     trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
     testMatrix = np.hstack((testMatrix, sentiment_test_features))
@@ -132,15 +138,21 @@ def main():
     output4 = clf.predict(testMatrix).tolist()  
 
     ### MISSPELLINGS ###
-    print("Running baseline + PoS Features + Sentiment Features + Misspellings features")
-    m = Missepllings()
+    print("Running baseline + PoS Features + TF-IDF Features + Sentiment Features + Misspellings features")
+    m = Misspellings()
     clean_train = np.array(m.get_clean_misspellings(False))
-    insult_train = np.array(s.get_insult_misspellings(False))
+    insult_train = np.array(m.get_insult_misspellings(False))
     misspellings_train_features = np.concatenate((clean_train, insult_train), axis=0)
+    shape = misspellings_train_features.shape
+    misspellings_train_features = misspellings_train_features.reshape((shape[0], 1))
+    print misspellings_train_features.shape
 
-    clean_test = np.array(s.get_clean_misspellings())
-    insult_test = np.array(s.get_insult_misspellings())
+    clean_test = np.array(m.get_clean_misspellings())
+    insult_test = np.array(m.get_insult_misspellings())
     misspellings_test_features = np.concatenate((clean_test, insult_test), axis=0)
+    shape = misspellings_test_features.shape
+    misspellings_test_features = misspellings_test_features.reshape((shape[0], 1))
+    print misspellings_test_features.shape
 
     trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
     testMatrix = np.hstack((testMatrix, sentiment_test_features))

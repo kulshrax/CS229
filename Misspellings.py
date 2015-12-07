@@ -17,11 +17,11 @@ class Misspellings(object):
     self.punctuation = set([',', ';', '\'', '"', '.', '!', '?'])
     self.dictionary = enchant.Dict("en_US")
 
-    self.cleanTrainSents = LanguageModel(CLEAN_TRAIN_AB_FILE).getSents()
-    self.insultTrainSents = LanguageModel(INSULT_TRAIN_FILE).getSents()
+    #self.cleanTrainSents = LanguageModel(CLEAN_TRAIN_AB_FILE).getSents()
+    #self.insultTrainSents = LanguageModel(INSULT_TRAIN_FILE).getSents()
 
-    self.cleanTestSents = LanguageModel(CLEAN_TEST_AB_FILE).getSents()
-    self.insultTestSents = LanguageModel(INSULT_TEST_FILE).getSents()
+    #self.cleanTestSents = LanguageModel(CLEAN_TEST_AB_FILE).getSents()
+    #self.insultTestSents = LanguageModel(INSULT_TEST_FILE).getSents()
 
     self.cleanSplitSpaces = LanguageModel(CLEAN_TRAIN_AB_FILE).splitBySpaces()
     self.insultSplitSpaces = LanguageModel(INSULT_TRAIN_AB_FILE).splitBySpaces()
