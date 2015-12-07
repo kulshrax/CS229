@@ -1,28 +1,36 @@
 
 
 Potential New Features:
-(- start w/ bag of words and pick top 1000 words - try TF-IDF )
+ARUN (- start w/ bag of words and pick top 1000 words - try TF-IDF )
 
- - Fraction of nouns / verbs / adjectives, etc.
+ - ARUN Fraction of nouns / verbs / adjectives, etc.
  	- NLTK PoS Tagging Module
+<<<<<<< HEAD
 
 
  - Fraction of misspelled things => falls out of bag of words
+=======
+ - STEPHANIE Fraction of misspelled things => falls out of bag of words
+>>>>>>> ef0dbae0ff0ef2a40391848a04e1f8e488eb8479
   	- NLTK SpellCheck Module
   	- Idea behind this is that misspelled words (use of internet slang like "u" instead of "you") correlate with insults
- - Sentiment analysis on individual words / bigrams, etc.
+ - STEPANIE Sentiment analysis on individual words / bigrams, etc.
  	- Compute our own sentiment values based on the training data?
  	- OR should we use a pre-existing NLTK implementation's sentiment weights?
- - Number of most positive / most negative words in this sample
+ - STEPHANIE Number of most positive / most negative words in this sample
  	- Based on above
+<<<<<<< HEAD
 
  	
  - Use the score generated from Naive Bayes (weigh this heavily)
+=======
+ - DONE (MATT) Use the score generated from Naive Bayes (weigh this heavily)
+>>>>>>> ef0dbae0ff0ef2a40391848a04e1f8e488eb8479
  	- DONE (from previous work)
 
 
 
-- Set threshold to move along the precision-recall curve
+- MATT Set threshold to move along the precision-recall curve
 
 
 - Hyperparam tuning:
