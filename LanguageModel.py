@@ -23,6 +23,7 @@ class LanguageModel:
 		self.wordFreqs = Counter(self.words)
 		self.bigramFreqs = Counter(ngrams(self.words, 2))
 		self.trigramFreqs = Counter(ngrams(self.words, 3))
+		self.posFracs = pos.pos_fractions(self.corpus.words())
 		
 	def getDocCount(self):
 		return self.docCount
@@ -47,6 +48,15 @@ class LanguageModel:
 
 	def getTotalTrigramCount(self):
 		return sum([self.trigramFreqs[a] for a in self.trigramFreqs])
+
+    def getNounFrac(self):
+        return self.posFracs['N']
+
+    def getVerbFrac(self):
+        return self.posFracs['V']
+
+    def getAdjFrac(self):
+       return self.posFracs['A']
 
 	def splitBySpaces(self):
 		open_file = open(corpusdir+self.filename)
