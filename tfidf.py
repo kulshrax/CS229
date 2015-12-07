@@ -3,12 +3,13 @@
 from __future__ import division
 from sklearn.feature_extraction.text import TfidfVectorizer
 import sys
+from naiveBayesBaseline import interpretResults
 
 CLEAN_TRAIN_CORPUS = 'corpora/clean_corpus_train.txt'
-INSULT_TRAIN_CORPUS = 'corpora/clean_corpus_train.txt'
+INSULT_TRAIN_CORPUS = 'corpora/insult_corpus_train.txt'
 
 CLEAN_TEST_CORPUS = 'corpora/clean_corpus_test.txt'
-INSULT_TEST_CORPUS = 'corpora/clean_corpus_test.txt'
+INSULT_TEST_CORPUS = 'corpora/insult_corpus_test.txt'
 
 
 def train(train_documents):
@@ -73,6 +74,7 @@ def test_classifier():
     correct_percent = (true_positives + true_negatives) / total
 
     print correct_percent
+    interpretResults(true_positives, true_negatives, false_positives, false_negatives)
     return true_positives, true_negatives, false_positives, false_negatives
 
 
