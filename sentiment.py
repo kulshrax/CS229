@@ -43,14 +43,14 @@ class Sentiment(object):
     f = open('data/clean_train_sentiment.csv', 'r')
     for line in f:
       vector.append(float(line))
-    return vector
+    return vector[len(vector-1449):len(vector)]
 
   def get_insult_train_vector(self):
     vector = []
     f = open('data/insult_train_sentiment.csv', 'r')
     for line in f:
       vector.append(float(line))
-    return vector
+    return vector[len(vector-525):len(vector)]
 
   def get_clean_test_vector(self):
     vector = []

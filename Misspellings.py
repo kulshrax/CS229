@@ -8,8 +8,8 @@ class Misspellings(object):
 
   def __init__(self):
 
-    INSULT_TRAIN_FILE = 'insult_corpus_train.txt'
-    CLEAN_TRAIN_FILE = 'clean_corpus_train.txt'
+    CLEAN_TRAIN_AB_FILE = 'clean_corpus_train1ab.txt'
+    INSULT_TRAIN_AB_FILE = 'insult_corpus_train1ab.txt'
 
     INSULT_TEST_FILE = 'insult_corpus_test.txt'
     CLEAN_TEST_FILE = 'clean_corpus_test.txt'
@@ -17,14 +17,14 @@ class Misspellings(object):
     self.punctuation = set([',', ';', '\'', '"', '.', '!', '?'])
     self.dictionary = enchant.Dict("en_US")
 
-    self.cleanTrainSents = LanguageModel(CLEAN_TRAIN_FILE).getSents()
+    self.cleanTrainSents = LanguageModel(CLEAN_TRAIN_AB_FILE).getSents()
     self.insultTrainSents = LanguageModel(INSULT_TRAIN_FILE).getSents()
 
-    self.cleanTestSents = LanguageModel(CLEAN_TEST_FILE).getSents()
+    self.cleanTestSents = LanguageModel(CLEAN_TEST_AB_FILE).getSents()
     self.insultTestSents = LanguageModel(INSULT_TEST_FILE).getSents()
 
-    self.cleanSplitSpaces = LanguageModel(CLEAN_TRAIN_FILE).splitBySpaces()
-    self.insultSplitSpaces = LanguageModel(INSULT_TRAIN_FILE).splitBySpaces()
+    self.cleanSplitSpaces = LanguageModel(CLEAN_TRAIN_AB_FILE).splitBySpaces()
+    self.insultSplitSpaces = LanguageModel(INSULT_TRAIN_AB_FILE).splitBySpaces()
 
     self.cleanTestSplitSpaces = LanguageModel(CLEAN_TEST_FILE).splitBySpaces()
     self.insultTestSplitSpaces = LanguageModel(INSULT_TEST_FILE).splitBySpaces()

@@ -3,6 +3,8 @@ from LanguageModel import LanguageModel
 import numpy as np
 from naiveBayesBaseline import baselineNaiveBayes
 import tfidf
+from sentiment import Sentiment
+from Misspellings import Misspellings
 
 
 INSULT_TRAIN_FILE = 'insult_corpus_train.txt'
@@ -109,6 +111,43 @@ def main():
     print ("\tTesting SVM....")   
     output3 = clf.predict(testMatrix).tolist()  
 
+    ### SENTIMENT ###
+    s = Sentiment()
+    clean_train = np.array(s.get_clean_train_vector())
+    insult_train = np.array(s.get_insult_train_vector())
+    sentiment_train_features = np.concatenate((clean_train, insult_train), axis=0)
+
+    clean_test = np.array(s.get_clean_test_vector())
+    insult_test = np.array(s.get_insult_test_vector())
+    sentiment_test_features = np.concatenate((clean_test, insult_test), axis=0)
+
+    trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
+    testMatrix = np.hstack((testMatrix, sentiment_test_features))
+
+    clf = svm.SVC()
+    print ("\tTraining SVM....")  
+    clf.fit(trainMatrix, trainLabels)
+    print ("\tTesting SVM....")   
+    output4 = clf.predict(testMatrix).tolist()  
+
+    ### MISSPELLINGS ###
+    m = Missepllings()
+    clean_train = np.array(m.get_clean_misspellings(False))
+    insult_train = np.array(s.get_insult_misspellings(False))
+    misspellings_train_features = np.concatenate((clean_train, insult_train), axis=0)
+
+    clean_test = np.array(s.get_clean_misspellings())
+    insult_test = np.array(s.get_insult_misspellings())
+    misspellings_test_features = np.concatenate((clean_test, insult_test), axis=0)
+
+    trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
+    testMatrix = np.hstack((testMatrix, sentiment_test_features))
+
+    clf = svm.SVC()
+    print ("\tTraining SVM....")  
+    clf.fit(trainMatrix, trainLabels)
+    print ("\tTesting SVM....")   
+    output5 = clf.predict(testMatrix).tolist()  
 
     with open('output_file.txt', 'w+') as f:
         f.write("Output 1\n")
@@ -119,7 +158,13 @@ def main():
         interpret_results(output2, testLabels, f)
         f.write("\nOutput 3\n") 
         f.write("{}\n".format(output3))
-        interpret_results(output2, testLabels, f)
+        interpret_results(output3, testLabels, f)
+        f.write("Output 4\n")
+        f.write("{}\n".format(output4))
+        interpret_results(output4, testLabels, f)
+        f.write("Output 5\n")
+        f.write("{}\n".format(output5))
+        interpret_results(output5, testLabels, f)
 
 
 def interpret_results(output, testLabels, f):
