@@ -39,8 +39,6 @@ class Misspellings(object):
       misspelled_words = 0
       total_words = 0
       for word in sent:
-        for char in self.punctuation:
-          word = word.replace(char, '')
         word = word.strip()
         #skip numbers, punctuations, non-words(i guess this is my splitting?), and usernames
         if word.isdigit() or word in self.punctuation or len(word) == 0 or word[0] == '@':
@@ -55,16 +53,14 @@ class Misspellings(object):
 
   def get_insult_misspellings(self, isTest=True):
     if isTest:
-      fileName = self.cleanTestSplitSpaces
+      fileName = self.insultTestSplitSpaces
     else:
-      fileName = self.cleanSplitSpaces
+      fileName = self.insultSplitSpaces
     vector = []
     for sent in fileName:
       misspelled_words = 0
       total_words = 0
       for word in sent:
-        for char in self.punctuation:
-          word = word.replace(char, '')
         word = word.strip()
         #skip numbers, punctuations, non-words(i guess this is my splitting?), and usernames
         if word.isdigit() or word in self.punctuation or len(word) == 0 or word[0] == '@':
