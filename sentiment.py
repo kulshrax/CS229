@@ -43,14 +43,14 @@ class Sentiment(object):
     f = open('data/clean_train_sentiment.csv', 'r')
     for line in f:
       vector.append(float(line))
-    return vector[len(vector-1449):len(vector)]
+    return vector[len(vector)-1449:len(vector)]
 
   def get_insult_train_vector(self):
     vector = []
     f = open('data/insult_train_sentiment.csv', 'r')
     for line in f:
       vector.append(float(line))
-    return vector[len(vector-525):len(vector)]
+    return vector[len(vector)-525:len(vector)]
 
   def get_clean_test_vector(self):
     vector = []
@@ -69,34 +69,7 @@ class Sentiment(object):
 if __name__ == '__main__':
   s = Sentiment()
 
-  clean_train_scores = s.api_sentiments(s.cleanSents)
-  clean_train_file = open('data/clean_train_sentiment.csv', 'w')
-  for elem in clean_train_scores:
-    clean_train_file.write(str(elem)+'\n')
-  clean_train_file.close()
-
-  insult_train_scores = s.api_sentiments(s.insultSents)
-  insult_train_file = open('data/insult_train_sentiment.csv', 'w')
-  for elem in insult_train_scores:
-    insult_train_file.write(str(elem)+'\n')
-  insult_train_file.close()
-
-  clean_test_scores = s.api_sentiments(s.cleanTestSents)
-  clean_test_file = open('data/clean_test_sentiment.csv', 'w')
-  for elem in clean_test_scores:
-    clean_test_file.write(str(elem)+'\n')
-  clean_test_file.close()
-
-  insult_test_scores = s.api_sentiments(s.insultTestSents)
-  insult_test_file = open('data/insult_test_sentiment.csv', 'w')
-  for elem in insult_test_scores:
-    insult_test_file.write(str(elem)+'\n')
-  insult_test_file.close()
-
-  print s.get_clean_test_vector()
-  print s.get_insult_test_vector()
-  print s.get_clean_train_vector()
-  print s.get_insult_train_vector()
+  print len(s.get_insult_train_vector())
 
 
 
