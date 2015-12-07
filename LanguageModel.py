@@ -20,6 +20,8 @@ CLEAN_TEST_FILE = 'clean_corpus_test.txt'
 class LanguageModel:
     def __init__(self, filename):
         self.filename = filename
+        self.raw = open(corpusdir+filename).read()
+        self.lines = list(open(corpusdir+filename))
         # Vector of vectors -> each sub-vector is a document 
         self.punctuation = set([',', ';', '\'', '"', '.', '!', '?'])
         self.allComments = self.splitBySpaces()
@@ -30,6 +32,12 @@ class LanguageModel:
         self.trigramFreqs = Counter(ngrams(self.words, 3))
         self.posFracs = pos.pos_fractions(self.words)
         
+    def getRawText(self):
+        return self.raw
+
+    def getLines(self):
+        return self.lines
+
     def getDocCount(self):
         return self.docCount
 

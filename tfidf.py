@@ -4,12 +4,20 @@ from __future__ import division
 from sklearn.feature_extraction.text import TfidfVectorizer
 import sys
 from naiveBayesBaseline import interpretResults
+from LanguageModel import LanguageModel
+import numpy as np
 
 CLEAN_TRAIN_CORPUS = 'corpora/clean_corpus_train.txt'
 INSULT_TRAIN_CORPUS = 'corpora/insult_corpus_train.txt'
 
 CLEAN_TEST_CORPUS = 'corpora/clean_corpus_test.txt'
 INSULT_TEST_CORPUS = 'corpora/insult_corpus_test.txt'
+
+CLEAN_TRAIN_AA_FILE = 'clean_corpus_train1aa.txt'
+CLEAN_TRAIN_AB_FILE = 'clean_corpus_train1ab.txt'
+
+INSULT_TRAIN_AA_FILE = 'insult_corpus_train1aa.txt'
+INSULT_TRAIN_AB_FILE = 'insult_corpus_train1ab.txt'
 
 
 def train(train_documents):
@@ -39,6 +47,30 @@ def classify(vectorizer, counts, test_documents):
         results.append((predicted_class, scores))
     return results
 
+
+def make_feature_vectors(train_clean_lm, train_insult_lm,
+        feature_clean_lm, feature_insult_lm):
+    train_clean = train_clean_lm.getRawText()
+    train_insult = train_insult_lm.getRawText()
+    train_corpus = [train_clean, train_insult]
+
+    vec, counts = train(train_corpus)
+
+    test_clean = feature_clean_lm.getLines()
+    test_insults = feature_insult_lm.getLines()
+    test_docs = test_clean + test_insults
+
+    return np.array([scores for _, scores in classify(vec, counts, test_docs)])
+
+def test():
+    trainAACleanLM = LanguageModel(CLEAN_TRAIN_AA_FILE)
+    trainAAInsultLM = LanguageModel(INSULT_TRAIN_AA_FILE)
+        
+    trainABCleanLM = LanguageModel(CLEAN_TRAIN_AB_FILE)
+    trainABInsultLM = LanguageModel(INSULT_TRAIN_AB_FILE)
+
+    return make_training_vectors(trainAACleanLM, trainAAInsultLM,
+        trainABCleanLM, trainABInsultLM)
 
 def test_classifier():
     clean_train_doc = open(CLEAN_TRAIN_CORPUS).read()
