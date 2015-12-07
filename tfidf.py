@@ -6,6 +6,7 @@ import sys
 from naiveBayesBaseline import interpretResults
 from LanguageModel import LanguageModel
 import numpy as np
+from scipy.spatial.distance import cosine
 
 CLEAN_TRAIN_CORPUS = 'corpora/clean_corpus_train.txt'
 INSULT_TRAIN_CORPUS = 'corpora/insult_corpus_train.txt'
@@ -40,9 +41,9 @@ def classify(vectorizer, counts, test_documents):
     """
     document_matrix = vectorizer.transform(test_documents)
     results = []
+    similarity = lambda a, b: 1 - cosine(a.toarray()[0], b.toarray()[0])
     for document in document_matrix:
-        words = document.nonzero()[1]
-        scores = [sum(row[0,i] for i in words) for row in counts]
+        scores = [similarity(document, row) for row in counts]
         predicted_class = scores.index(max(scores))
         results.append((predicted_class, scores))
     return results
@@ -111,7 +112,7 @@ def test_classifier():
 
 
 def main(argv):
-    pass
+    test_classifier()
 
 
 if __name__ == '__main__':
