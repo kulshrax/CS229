@@ -5,6 +5,7 @@ from naiveBayesBaseline import baselineNaiveBayes
 import tfidf
 from sentiment import Sentiment
 from Misspellings import Misspellings
+from pca_graph import get_pca_graph
 
 
 INSULT_TRAIN_FILE = 'insult_corpus_train.txt'
@@ -179,6 +180,11 @@ def main():
         f.write("Output 5\n")
         f.write("{}\n".format(output5))
         interpret_results(output5, testLabels, f)
+
+    get_pca_graph(trainMatrix, trainLabels, "train_pca.png", title="PCA of Training Set")
+    get_pca_graph(testMatrix, testLabels, "test_pca.png", title="PCA of Test Set")
+    get_pca_graph(trainMatrix, trainLabels, "train_pca2.png", title="PCA of Training Set (Insults Only)", plot_negative=False)
+    get_pca_graph(testMatrix, testLabels, "test_pca2.png", title="PCA of Test Set (Insults Only)", plot_negative=False)
 
 
 def interpret_results(output, testLabels, f):

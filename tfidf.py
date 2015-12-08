@@ -43,7 +43,10 @@ def classify(vectorizer, counts, test_documents):
     results = []
     similarity = lambda a, b: 1 - cosine(a.toarray()[0], b.toarray()[0])
     for document in document_matrix:
-        scores = [similarity(document, row) for row in counts]
+        # Cosine similarity causes NaN errors for some reason.
+        # scores = [similarity(document, row) for row in counts]
+        words = document.nonzero()[1]
+        scores = [sum(row[0,i] for i in words) for row in counts]
         predicted_class = scores.index(max(scores))
         results.append((predicted_class, scores))
     return results
