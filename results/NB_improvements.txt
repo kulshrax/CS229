@@ -1,0 +1,89 @@
+1. Baseline NB (no smoothing or anything, meaning any word not in vocabulary->probability of 0):
+
+~~~~~~~ Results ~~~~~~~
+Precision: 0.793
+Recall: 0.116
+F1 Score: 0.202
+tp: 226, tn: 635, fp: 59, fn: 1728
+
+Analysis: This did really badly because it made no assumptions at all about the data and didn't try to recover from errors. The most damning error was fixed in the (#2): many of the words in the test set were not encountered before, so we multiplying by 0 a lot, then defaulting to predicting "insult" on tie, which led to poor recall.
+
+2. (#1) + Ignore words not in one or the other set
+
+~~~~~~~ Results ~~~~~~~
+Precision: 0.947
+Recall: 0.637
+F1 Score: 0.762
+tp: 1245, tn: 624, fp: 70, fn: 709
+
+Analysis: Simply ignoring words that didn't appear in both LM's meant that we didn't end up with -inf log-probabilities as often.
+
+3. (#2) + Laplace Smoothing (Combining Vocabularies)
+
+ ==> Laplace Smoother of 0.1:
+
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.912
+	Recall: 0.771
+	F1 Score: 0.836
+	tp: 1506, tn: 549, fp: 145, fn: 448
+
+ ==> Laplace Smoother of 0.01:
+
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.868
+	Recall: 0.818
+	F1 Score: 0.842
+	tp: 1599, tn: 450, fp: 244, fn: 355
+
+
+Analysis: What we did here was use the two language models (clean and insult) genereated during testing to generate a shared vocabulary (some words appear in one model and not the other). Then, we smoothed both language models' word probabilities using Laplace Smoothing. Instead of using the traditional value of 1, though, we used smaller fractions, because in general our word frequencies were low. We found that using 0.01 worked well, so we kept that moving forward. Though lower probabilities worked even better, we decided that using things smaller than 0.01 moved into the realm of overfitting rare words.
+
+4. (#3) + Removing Stopwords (didn't work so we reverted this)
+
+~~~~~~~ Results ~~~~~~~
+Precision: 0.888
+Recall: 0.798
+F1 Score: 0.840
+tp: 1559, tn: 497, fp: 197, fn: 395
+
+Analysis: This made our results slightly worse, we think, primarily because some of the comments were really short. Because these comments were so short, stop words might form a significant poriton of individual comments. However, at the end of the day, they don't carry too much information, so it didn't significanlty hurt our results. Regardless, because it lowered our scores (in particular recall, which we care a lot about), we decided to not use this feature.
+
+
+5. (#3) + Stupid Backoff (Backoff values of 0.4 and 0.1)
+
+ ==> Trigrams, Backoff factor of 0.1
+
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.692
+	Recall: 0.710
+	F1 Score: 0.701
+	tp: 1388, tn: 75, fp: 619, fn: 566
+
+ ==> Trigrams, Backoff factor of 0.4 (this is the normal value)
+
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.695
+	Recall: 0.778
+	F1 Score: 0.734
+	tp: 1521, tn: 26, fp: 668, fn: 433
+
+ ==> Trigrams, Backoff factor of 0.01
+
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.695
+	Recall: 0.778
+	F1 Score: 0.734
+	tp: 1521, tn: 26, fp: 668, fn: 433
+
+ This will attempt to use a trigram, then if it doesn't exist in the language model, try to use a bigram, then a unigram. If there is no trigram, it will use the bigram probability times the backoff factor, and if there is no bigram either it uses the unigram probability times the backoff factor squared. Also started using >= instead of >.
+
+ Note that this made it worse in our implementation, but we will show the results with and without it, because stupid backoff tends to generalize well.
+
+6. (#5) + Threshold variation (different values of alpha shown in the precision-recall curve, but we settled on this value:) -> also used >= instead of just >
+
+ W/ Stupid Backoff (built off #5)
+
+
+ W/o Stupid Backoff (built off #4)
+

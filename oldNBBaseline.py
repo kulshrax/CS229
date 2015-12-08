@@ -19,37 +19,37 @@ LAPLACE_SMOOTHING = True
 LAPLACE_SMOOTHER = 0.01
 
 REMOVE_STOPWORDS = False
-STUPID_BACKOFF = False
+STUPID_BACKOFF = True
 USING_TRIGRAM = True
 SB_ALPHA = 0.01 #discount factor for stupid backoff
 ALPHA = 1.0
 
 def main():
 
-	precisions = []
-	recalls = []
-	for alpha in [0.3, 0.5, 0.7, 0.9, 0.95, 0.97, 0.99, 1.00, 1.01, 1.03, 1.05, 1.07, 1.1, 1.3, 1.5, 1.7, 2.0, 3.0, 5.0]:
-		ALPHA = alpha
+	print ("Generating models....")
+	print ("\tcleanLM...")
+	cleanLM = LanguageModel(CLEAN_TRAIN_FILE)
+	print ("\tinsultLM...")
+	insultLM = LanguageModel(INSULT_TRAIN_FILE)
+	
+	print ("\tcleanTestLM...")
+	cleanTestSents = LanguageModel(CLEAN_TEST_FILE).getSents()
+	print ("\tinsultTestLM...")
+	insultTestSents = LanguageModel(INSULT_TEST_FILE).getSents()
 
-		cleanLM = LanguageModel(CLEAN_TRAIN_FILE)
-		insultLM = LanguageModel(INSULT_TRAIN_FILE)
-		
-		cleanTestSents = LanguageModel(CLEAN_TEST_FILE).getSents()
-		insultTestSents = LanguageModel(INSULT_TEST_FILE).getSents()
+	NB = baselineNaiveBayes(cleanLM, insultLM)
+	print ("Training NB Model....")
+	NB.train()
+	#print NB.genProbs(cleanTestSents, insultTestSents)
 
-		NB = baselineNaiveBayes(cleanLM, insultLM)
-		NB.train()
-		#print NB.genProbs(cleanTestSents, insultTestSents)
+	print("Testing NB Model....")
+	if (STUPID_BACKOFF):
+		tp, tn, fp, fn = NB.testStupidBackoff(cleanTestSents, insultTestSents)
+	else:
+		tp, tn, fp, fn = NB.testImproved1(cleanTestSents, insultTestSents)
 
-		if (STUPID_BACKOFF):
-			tp, tn, fp, fn = NB.testStupidBackoff(cleanTestSents, insultTestSents, ALPHA)
-		else:
-			tp, tn, fp, fn = NB.testImproved1(cleanTestSents, insultTestSents, ALPHA)
+	interpretResults(tp, tn, fp, fn)
 
-		interpretResults(tp, tn, fp, fn)
-
-	print "Precisions:\n {}".format(precisions)
-	print "Recalls:\n {}".format(recalls)
 
 def interpretResults(tp, tn, fp, fn):
 	precision = (tp + 0.0) / (tp + fp)
@@ -220,8 +220,8 @@ class baselineNaiveBayes:
 					insultProb += log(SB_ALPHA * bigramInsultProb)
 				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
 					insultProb += log(SB_ALPHA * SB_ALPHA * self.insultWordProbs[unigram])
-				
-			probs.append([cleanProb, insultProb])
+
+			probs.append([cleanProb, insultProb])				
 
 		for sentence in insultSents:
 			cleanProb = log(self.cleanPrior)
@@ -243,19 +243,14 @@ class baselineNaiveBayes:
 				# Use clean bigram else unigram
 				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
 					cleanProb += log(trigramCleanProb)
-				elif bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
+				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					cleanProb += log(SB_ALPHA * bigramCleanProb)
-				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
-					cleanProb += log(SB_ALPHA * SB_ALPHA * self.cleanWordProbs[unigram])
-
 
 				# Use insult bigram else unigram
 				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
 					insultProb += log(trigramInsultProb)
-				elif bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
+				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					insultProb += log(SB_ALPHA * bigramInsultProb)
-				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
-					insultProb += log(SB_ALPHA * SB_ALPHA * self.insultWordProbs[unigram])
 
 			probs.append([cleanProb, insultProb])				
 
@@ -263,7 +258,7 @@ class baselineNaiveBayes:
 
 
 	# This version tried simply ignoring words that don't appear in either LM.
-	def testImproved1(self, cleanSents, insultSents, ALPHA):
+	def testImproved1(self, cleanSents, insultSents):
 		truePos = 0 # Correctly-labeled insults
 		trueNeg = 0 # Correctly-labeled clean
 		falsePos = 0 # Clean mislabeled as insult
@@ -283,7 +278,7 @@ class baselineNaiveBayes:
 					cleanProb += log(self.cleanWordProbs[word])
 					insultProb += log(self.insultWordProbs[word])
 			#print "cleanProb {}, insultProb {}".format(cleanProb, insultProb)
-			if ((cleanProb + 0.0) / insultProb <= ALPHA):
+			if (cleanProb > insultProb):
 				truePos += 1
 			else:
 				falseNeg += 1
@@ -297,14 +292,14 @@ class baselineNaiveBayes:
 					cleanProb += log(self.cleanWordProbs[word])
 					insultProb += log(self.insultWordProbs[word])
 
-			if ((cleanProb + 0.0) / insultProb <= ALPHA):
+			if (cleanProb > insultProb):
 				falsePos += 1
 			else:
 				trueNeg += 1
 
 		return truePos, trueNeg, falsePos, falseNeg
 
-	def testStupidBackoff(self, cleanSents, insultSents, ALPHA):
+	def testStupidBackoff(self, cleanSents, insultSents):
 		truePos = 0 # Correctly-labeled insults
 		trueNeg = 0 # Correctly-labeled clean
 		falsePos = 0 # Clean mislabeled as insult
@@ -333,7 +328,7 @@ class baselineNaiveBayes:
 				# Use clean bigram else unigram
 				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
 					cleanProb += log(trigramCleanProb)
-				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
+				elif bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					cleanProb += log(SB_ALPHA * bigramCleanProb)
 				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
 					cleanProb += log(SB_ALPHA * SB_ALPHA * self.cleanWordProbs[unigram])
@@ -341,11 +336,12 @@ class baselineNaiveBayes:
 				# Use insult bigram else unigram
 				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
 					insultProb += log(trigramInsultProb)
-				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
+				elif bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					insultProb += log(SB_ALPHA * bigramInsultProb)
 				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
 					insultProb += log(SB_ALPHA * SB_ALPHA * self.insultWordProbs[unigram])
 				
+			print ("cleanProb {}, insultProb {}".format(cleanProb, insultProb))
 			if ((cleanProb + 0.0) / insultProb <= ALPHA):
 				truePos += 1
 			else:
@@ -371,14 +367,21 @@ class baselineNaiveBayes:
 				# Use clean bigram else unigram
 				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
 					cleanProb += log(trigramCleanProb)
-				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
+				elif bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					cleanProb += log(SB_ALPHA * bigramCleanProb)
+				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
+					cleanProb += log(SB_ALPHA * SB_ALPHA * self.cleanWordProbs[unigram])
+
 
 				# Use insult bigram else unigram
 				if USING_TRIGRAM and trigramCleanProb > 0.0 and trigramInsultProb > 0.0:
 					insultProb += log(trigramInsultProb)
-				if bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
+				elif bigramCleanProb > 0.0 and bigramInsultProb > 0.0:
 					insultProb += log(SB_ALPHA * bigramInsultProb)
+				elif (self.cleanWordProbs[unigram] > 0 and self.insultWordProbs[unigram] > 0):
+					insultProb += log(SB_ALPHA * SB_ALPHA * self.insultWordProbs[unigram])
+
+			print ("cleanProb {}, insultProb {}".format(cleanProb, insultProb))
 
 			if ((cleanProb + 0.0) / insultProb <= ALPHA):
 				falsePos += 1

@@ -1,0 +1,95 @@
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
+~~~~~~~ Results ~~~~~~~
+Precision: 0.543
+Recall: 0.760
+F1 Score: 0.633
+tp: 19, tn: 9, fp: 16, fn: 6
