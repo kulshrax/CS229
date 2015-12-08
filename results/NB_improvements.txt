@@ -82,8 +82,23 @@ Analysis: This made our results slightly worse, we think, primarily because some
 
 6. (#5) + Threshold variation (different values of alpha shown in the precision-recall curve, but we settled on this value:) -> also used >= instead of just >
 
- W/ Stupid Backoff (built off #5)
+ FOR BOTH OF THESE THERE ARE PRECISION-RECALL CURVES, BUT THE OPTIMAL VALUES ARE HERE:
+
+ ==> W/ Stupid Backoff (built off #5)
+
+ 	Alpha of 1.03
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.853
+	Recall: 0.939
+	F1 Score: 0.894
+	tp: 1834, tn: 378, fp: 316, fn: 120
 
 
- W/o Stupid Backoff (built off #4)
+ ==> W/o Stupid Backoff (built off #4)
 
+    Alpha of 1.05
+	~~~~~~~ Results ~~~~~~~
+	Precision: 0.812
+	Recall: 0.942
+	F1 Score: 0.872
+	tp: 1841, tn: 268, fp: 426, fn: 113
