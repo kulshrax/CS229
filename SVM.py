@@ -53,7 +53,7 @@ def main():
 
     testMatrix = np.array(NB.genProbs(testCleanLM.getSents(), testInsultLM.getSents()))
 
-    clf = svm.SVC()
+    clf = svm.SVC(kernel='linear')
     print ("\tTraining SVM....")    
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....") 
@@ -73,7 +73,7 @@ def main():
     trainMatrix = np.hstack((trainMatrix, posFeatures))
     testMatrix = np.hstack((testMatrix, testPosFeatures))
 
-    clf = svm.SVC()
+    clf = svm.SVC(kernel='linear')
     print ("\tTraining SVM....")    
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....") 
@@ -106,7 +106,7 @@ def main():
     testMatrix = np.hstack((testMatrix, tfidf_test_features))
 
 
-    clf = svm.SVC()
+    clf = svm.SVC(kernel='linear')
     print ("\tTraining SVM....")  
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....")   
@@ -132,7 +132,7 @@ def main():
     trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
     testMatrix = np.hstack((testMatrix, sentiment_test_features))
 
-    clf = svm.SVC()
+    clf = svm.SVC(kernel='linear')
     print ("\tTraining SVM....")  
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....")   
@@ -158,13 +158,13 @@ def main():
     trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
     testMatrix = np.hstack((testMatrix, sentiment_test_features))
 
-    clf = svm.SVC()
+    clf = svm.SVC(kernel='linear')
     print ("\tTraining SVM....")  
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....")   
     output5 = clf.predict(testMatrix).tolist()  
 
-    with open('SVM_output_file_with_SB.txt', 'w+') as f:
+    with open('1SVM_output_file_with_SB_LINEAR_kernel.txt', 'w+') as f:
         f.write("Output 1\n")
         f.write("{}\n".format(output1))
         interpret_results(output1, testLabels, f)

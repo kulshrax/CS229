@@ -19,7 +19,7 @@ LAPLACE_SMOOTHING = True
 LAPLACE_SMOOTHER = 0.01
 
 REMOVE_STOPWORDS = False
-STUPID_BACKOFF = False
+STUPID_BACKOFF = True
 USING_TRIGRAM = True
 SB_ALPHA = 0.01 #discount factor for stupid backoff
 ALPHA = 1.0

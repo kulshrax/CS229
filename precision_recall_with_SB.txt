@@ -1,0 +1,95 @@
+~~~~~~~ Results ~~~~~~~
+Precision: 0.167
+Recall: 0.007
+F1 Score: 0.013
+tp: 13, tn: 629, fp: 65, fn: 1941
+~~~~~~~ Results ~~~~~~~
+Precision: 0.167
+Recall: 0.007
+F1 Score: 0.013
+tp: 13, tn: 629, fp: 65, fn: 1941
+~~~~~~~ Results ~~~~~~~
+Precision: 0.167
+Recall: 0.007
+F1 Score: 0.013
+tp: 13, tn: 629, fp: 65, fn: 1941
+~~~~~~~ Results ~~~~~~~
+Precision: 0.533
+Recall: 0.041
+F1 Score: 0.076
+tp: 80, tn: 624, fp: 70, fn: 1874
+~~~~~~~ Results ~~~~~~~
+Precision: 0.835
+Recall: 0.228
+F1 Score: 0.359
+tp: 446, tn: 606, fp: 88, fn: 1508
+~~~~~~~ Results ~~~~~~~
+Precision: 0.892
+Recall: 0.456
+F1 Score: 0.604
+tp: 892, tn: 586, fp: 108, fn: 1062
+~~~~~~~ Results ~~~~~~~
+Precision: 0.909
+Recall: 0.689
+F1 Score: 0.784
+tp: 1347, tn: 559, fp: 135, fn: 607
+~~~~~~~ Results ~~~~~~~
+Precision: 0.902
+Recall: 0.778
+F1 Score: 0.836
+tp: 1521, tn: 529, fp: 165, fn: 433
+~~~~~~~ Results ~~~~~~~
+Precision: 0.892
+Recall: 0.849
+F1 Score: 0.870
+tp: 1659, tn: 494, fp: 200, fn: 295
+~~~~~~~ Results ~~~~~~~
+Precision: 0.853
+Recall: 0.939
+F1 Score: 0.894
+tp: 1834, tn: 378, fp: 316, fn: 120
+~~~~~~~ Results ~~~~~~~
+Precision: 0.814
+Recall: 0.970
+F1 Score: 0.885
+tp: 1896, tn: 260, fp: 434, fn: 58
+~~~~~~~ Results ~~~~~~~
+Precision: 0.778
+Recall: 0.985
+F1 Score: 0.870
+tp: 1925, tn: 146, fp: 548, fn: 29
+~~~~~~~ Results ~~~~~~~
+Precision: 0.760
+Recall: 0.994
+F1 Score: 0.861
+tp: 1943, tn: 80, fp: 614, fn: 11
+~~~~~~~ Results ~~~~~~~
+Precision: 0.738
+Recall: 1.000
+F1 Score: 0.849
+tp: 1954, tn: 0, fp: 694, fn: 0
+~~~~~~~ Results ~~~~~~~
+Precision: 0.738
+Recall: 1.000
+F1 Score: 0.849
+tp: 1954, tn: 0, fp: 694, fn: 0
+~~~~~~~ Results ~~~~~~~
+Precision: 0.738
+Recall: 1.000
+F1 Score: 0.849
+tp: 1954, tn: 0, fp: 694, fn: 0
+~~~~~~~ Results ~~~~~~~
+Precision: 0.738
+Recall: 1.000
+F1 Score: 0.849
+tp: 1954, tn: 0, fp: 694, fn: 0
+~~~~~~~ Results ~~~~~~~
+Precision: 0.738
+Recall: 1.000
+F1 Score: 0.849
+tp: 1954, tn: 0, fp: 694, fn: 0
+~~~~~~~ Results ~~~~~~~
+Precision: 0.738
+Recall: 1.000
+F1 Score: 0.849
+tp: 1954, tn: 0, fp: 694, fn: 0

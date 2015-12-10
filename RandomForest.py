@@ -163,7 +163,7 @@ def main():
     print ("\tTesting forest....")   
     output5 = clf.predict(testMatrix).tolist()  
 
-    with open('LOG_REG_output_file_w_SB.txt', 'w+') as f:
+    with open('RANDOM_FOREST_output_file_without_SB.txt', 'w+') as f:
         f.write("Output 1\n")
         f.write("{}\n".format(output1))
         interpret_results(output1, testLabels, f)
