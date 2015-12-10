@@ -1,4 +1,5 @@
 from sklearn import svm
+from sklearn.learning_curve import learning_curve
 from LanguageModel import LanguageModel
 import numpy as np
 from naiveBayesBaseline import baselineNaiveBayes
@@ -6,6 +7,8 @@ import tfidf
 from sentiment import Sentiment
 from Misspellings import Misspellings
 from pca_graph import get_pca_graph
+from random import shuffle
+import matplotlib.pyplot as plt
 
 
 INSULT_TRAIN_FILE = 'insult_corpus_train.txt'
@@ -59,8 +62,7 @@ def main():
     print ("\tTesting SVM....") 
     output1 = clf.predict(testMatrix).tolist()
 
-
-    ### Baseline + PoS Features
+    ## Baseline + PoS Features
     print ("Running baseline + PoS Features....")
     cleanPosMatrix = trainABCleanLM.getPosMatrix()
     insultPosMatrix = trainABInsultLM.getPosMatrix()
@@ -78,6 +80,7 @@ def main():
     clf.fit(trainMatrix, trainLabels)
     print ("\tTesting SVM....") 
     output2 = clf.predict(testMatrix).tolist()
+    output2 = []
 
 
     ### Baseline + PoS Features + TF-IDF Features (TODO Arun)
@@ -164,7 +167,26 @@ def main():
     print ("\tTesting SVM....")   
     output5 = clf.predict(testMatrix).tolist()  
 
-    with open('1SVM_output_file_with_SB_LINEAR_kernel.txt', 'w+') as f:
+
+    index_shuf = range(len(trainMatrix))
+    trainMatrix_shuf = []
+    trainLabel_shuf = []
+    shuffle(index_shuf)
+    for i in index_shuf:
+        trainMatrix_shuf.append(trainMatrix[i])
+        trainLabel_shuf.append(trainLabels[i])
+
+    train_sizes, train_scores, valid_scores = learning_curve(svm.SVC(), trainMatrix_shuf, trainLabel_shuf, train_sizes=[100, 300, 500, 700, 900], cv=2)
+    average_train_scores = [sum(i)/float(len(i)) for i in train_scores]
+    average_valid_scores = [sum(i)/float(len(i)) for i in valid_scores]
+    plt.plot(train_sizes, average_train_scores)
+    plt.plot(train_sizes, average_valid_scores)
+    plt.legend(['Training score', 'Cross-validation score'], loc='center left', bbox_to_anchor=(0.85, 0.5))
+    plt.ylabel('Score')
+    plt.xlabel('Training examples')
+    plt.show()
+    
+    with open('SVM_output_file_with_SB.txt', 'w+') as f:
         f.write("Output 1\n")
         f.write("{}\n".format(output1))
         interpret_results(output1, testLabels, f)
