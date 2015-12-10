@@ -56,11 +56,11 @@ def main():
 
     testMatrix = np.array(NB.genProbs(testCleanLM.getSents(), testInsultLM.getSents()))
 
-    clf = svm.SVC(kernel='linear')
-    print ("\tTraining SVM....")    
-    clf.fit(trainMatrix, trainLabels)
-    print ("\tTesting SVM....") 
-    output1 = clf.predict(testMatrix).tolist()
+    # clf = svm.SVC(kernel='linear')
+    # print ("\tTraining SVM....")    
+    # clf.fit(trainMatrix, trainLabels)
+    # print ("\tTesting SVM....") 
+    # output1 = clf.predict(testMatrix).tolist()
 
     ## Baseline + PoS Features
     print ("Running baseline + PoS Features....")
@@ -75,12 +75,11 @@ def main():
     trainMatrix = np.hstack((trainMatrix, posFeatures))
     testMatrix = np.hstack((testMatrix, testPosFeatures))
 
-    clf = svm.SVC(kernel='linear')
-    print ("\tTraining SVM....")    
-    clf.fit(trainMatrix, trainLabels)
-    print ("\tTesting SVM....") 
-    output2 = clf.predict(testMatrix).tolist()
-    output2 = []
+    # clf = svm.SVC(kernel='linear')
+    # print ("\tTraining SVM....")    
+    # clf.fit(trainMatrix, trainLabels)
+    # print ("\tTesting SVM....") 
+    # output2 = clf.predict(testMatrix).tolist()
 
 
     ### Baseline + PoS Features + TF-IDF Features (TODO Arun)
@@ -109,11 +108,11 @@ def main():
     testMatrix = np.hstack((testMatrix, tfidf_test_features))
 
 
-    clf = svm.SVC(kernel='linear')
-    print ("\tTraining SVM....")  
-    clf.fit(trainMatrix, trainLabels)
-    print ("\tTesting SVM....")   
-    output3 = clf.predict(testMatrix).tolist()  
+    # clf = svm.SVC(kernel='linear')
+    # print ("\tTraining SVM....")  
+    # clf.fit(trainMatrix, trainLabels)
+    # print ("\tTesting SVM....")   
+    # output3 = clf.predict(testMatrix).tolist()  
 
     ### SENTIMENT ###
     print("Running baseline + PoS Features + TF-IDF Features + Sentiment Features")
@@ -135,11 +134,11 @@ def main():
     trainMatrix = np.hstack((trainMatrix, sentiment_train_features))
     testMatrix = np.hstack((testMatrix, sentiment_test_features))
 
-    clf = svm.SVC(kernel='linear')
-    print ("\tTraining SVM....")  
-    clf.fit(trainMatrix, trainLabels)
-    print ("\tTesting SVM....")   
-    output4 = clf.predict(testMatrix).tolist()  
+    # clf = svm.SVC(kernel='linear')
+    # print ("\tTraining SVM....")  
+    # clf.fit(trainMatrix, trainLabels)
+    # print ("\tTesting SVM....")   
+    # output4 = clf.predict(testMatrix).tolist()  
 
     ### MISSPELLINGS ###
     print("Running baseline + PoS Features + TF-IDF Features + Sentiment Features + Misspellings features")
@@ -186,22 +185,22 @@ def main():
     plt.xlabel('Training examples')
     plt.show()
     
-    with open('SVM_output_file_with_SB.txt', 'w+') as f:
-        f.write("Output 1\n")
-        f.write("{}\n".format(output1))
-        interpret_results(output1, testLabels, f)
-        f.write("\nOutput 2\n") 
-        f.write("{}\n".format(output2))
-        interpret_results(output2, testLabels, f)
-        f.write("\nOutput 3\n") 
-        f.write("{}\n".format(output3))
-        interpret_results(output3, testLabels, f)
-        f.write("Output 4\n")
-        f.write("{}\n".format(output4))
-        interpret_results(output4, testLabels, f)
-        f.write("Output 5\n")
-        f.write("{}\n".format(output5))
-        interpret_results(output5, testLabels, f)
+    # with open('SVM_output_file_with_SB.txt', 'w+') as f:
+    #     f.write("Output 1\n")
+    #     f.write("{}\n".format(output1))
+    #     interpret_results(output1, testLabels, f)
+    #     f.write("\nOutput 2\n") 
+    #     f.write("{}\n".format(output2))
+    #     interpret_results(output2, testLabels, f)
+    #     f.write("\nOutput 3\n") 
+    #     f.write("{}\n".format(output3))
+    #     interpret_results(output3, testLabels, f)
+    #     f.write("Output 4\n")
+    #     f.write("{}\n".format(output4))
+    #     interpret_results(output4, testLabels, f)
+    #     f.write("Output 5\n")
+    #     f.write("{}\n".format(output5))
+    #     interpret_results(output5, testLabels, f)
 
     get_pca_graph(trainMatrix, trainLabels, "train_pca.png", title="PCA of Training Set")
     get_pca_graph(testMatrix, testLabels, "test_pca.png", title="PCA of Test Set")
